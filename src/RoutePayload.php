@@ -16,15 +16,19 @@ class RoutePayload
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public static function compile(Router $router, $group = false)
+    public static function compile(Router $router, $group = false, $guard = null)
     {
-        return (new static($router))->applyFilters($group);
+        return (new static($router))->applyFilters($group, $guard);
     }
 
-    public function applyFilters($group)
+    public function applyFilters($group, $guard)
     {
         if ($group) {
             return $this->group($group);
+        }
+
+        if($guard){
+            $this->guardGroup();
         }
 
         // return unfiltered routes if user set both config options.
@@ -41,6 +45,20 @@ class RoutePayload
         }
 
         return $this->routes;
+    }
+
+    public function guardGroup()
+    {
+        $defaultGuard = auth()->getDefaultDriver();
+
+        $guardConfigKey = "ziggy.guard.{$defaultGuard}";
+
+        if (config()->has("{$guardConfigKey}.blacklist")){
+            return $this->blacklist("{$guardConfigKey}.blacklist");
+        }
+        elseif (config()->has("{$guardConfigKey}.whitelist")){
+            return $this->whitelist("{$guardConfigKey}.whitelist");
+        }
     }
 
     public function group($group)
@@ -60,14 +78,14 @@ class RoutePayload
         return $this->routes;
     }
 
-    public function blacklist()
+    public function blacklist($config = null)
     {
-        return $this->filter(config('ziggy.blacklist'), false);
+        return $this->filter($config ?? config('ziggy.blacklist'), false);
     }
 
-    public function whitelist()
+    public function whitelist($config = null)
     {
-        return $this->filter(config('ziggy.whitelist'), true);
+        return $this->filter($config ?? config('ziggy.whitelist'), true);
     }
 
     public function filter($filters = [], $include = true)
