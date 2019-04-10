@@ -20,14 +20,14 @@ class BladeRouteGenerator
         $this->router = $router;
     }
 
-    public function getRoutePayload($group = false)
+    public function getRoutePayload($group = false, $guard = null)
     {
-        return RoutePayload::compile($this->router, $group);
+        return RoutePayload::compile($this->router, $group, $guard);
     }
 
-    public function generate($group = false)
+    public function generate($group = false, $guard =  null)
     {
-        $json = $this->getRoutePayload($group)->toJson();
+        $json = $this->getRoutePayload($group, $guard)->toJson();
 
         if (static::$generated) {
             return $this->generateMergeJavascript($json);

@@ -28,7 +28,7 @@ class RoutePayload
         }
 
         if($guard){
-            $this->guardGroup();
+         return  $this->guardGroup();
         }
 
         // return unfiltered routes if user set both config options.
@@ -80,12 +80,12 @@ class RoutePayload
 
     public function blacklist($config = null)
     {
-        return $this->filter($config ?? config('ziggy.blacklist'), false);
+        return $this->filter(config($config ?? 'ziggy.blacklist'), false);
     }
 
     public function whitelist($config = null)
     {
-        return $this->filter($config ?? config('ziggy.whitelist'), true);
+        return $this->filter(config($config ?? 'ziggy.whitelist'), true);
     }
 
     public function filter($filters = [], $include = true)

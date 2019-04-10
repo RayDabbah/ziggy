@@ -14,11 +14,16 @@ class ZiggyServiceProvider extends ServiceProvider
             return Macro::blacklist($this, $group);
         });
 
-        Route::macro('whitelist', function ($group = null, $guard = null) {
+        Route::macro('whitelist', function ($group = null) {
             return Macro::whitelist($this, $group);
         });
 
-        $this->app['blade.compiler']->directive('routes', function ($group, $guard) {
+        $this->app['blade.compiler']->directive('routes', function ($group) {
+           $group =  explode(',', $group);
+
+            $guard = isset($group[1]) ? trim($group[1]) : false;
+            $group = trim($group[0]);
+
             return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}, {$guard}); ?>";
         });
 
