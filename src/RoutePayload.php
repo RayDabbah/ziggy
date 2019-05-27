@@ -16,20 +16,20 @@ class RoutePayload
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public static function compile(Router $router, $group = false, $guard = null)
+    public static function compile(Router $router, $group = false)
     {
-        return (new static($router))->applyFilters($group, $guard);
+        return (new static($router))->applyFilters($group);
     }
 
-    public function applyFilters($group, $guard)
+    public function applyFilters($group)
     {
         if ($group) {
             return $this->group($group);
         }
 
-        if($guard){
-         return  $this->guardGroup();
-        }
+         if($this->guardGroup()){
+             return $this->guardGroup();
+         } ;
 
         // return unfiltered routes if user set both config options.
         if (config()->has('ziggy.blacklist') && config()->has('ziggy.whitelist')) {

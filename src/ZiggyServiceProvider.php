@@ -19,12 +19,7 @@ class ZiggyServiceProvider extends ServiceProvider
         });
 
         $this->app['blade.compiler']->directive('routes', function ($group) {
-           $group =  explode(', ', $group);
-
-            $guard = isset($group[1]) ? ',' . trim($group[1]) : false;
-            $group = trim($group[0]);
-
-            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}{$guard}); ?>";
+            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
         });
 
         if ($this->app->runningInConsole()) {
